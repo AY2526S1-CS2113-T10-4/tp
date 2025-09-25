@@ -1,5 +1,8 @@
 package modhero.data;
 
+import static modhero.common.Constants.NUM_TERMS;
+import static modhero.common.Constants.NUM_YEARS;
+
 import modhero.data.modules.Module;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +19,14 @@ public class Timetable {
      * Creates a timetable structure for the specified number of years and terms.
      * Each year contains a list of terms, which in turn contain modules.
      *
-     * @param numYears number of academic years
-     * @param numTermsPerYear number of terms per year
      */
-    public Timetable(int numYears, int numTermsPerYear) {
+    public Timetable() {
         timetable = new ArrayList<>();
 
-        // Initialize structure
-        for (int year = 0; year < numYears; year++) {
+        // Initialize the timetable
+        for (int year = 0; year < NUM_YEARS; year++) {
             List<List<Module>> yearSemesters = new ArrayList<>();
-            for (int sem = 0; sem < numTermsPerYear; sem++) {
+            for (int sem = 0; sem < NUM_TERMS; sem++) {
                 yearSemesters.add(new ArrayList<>()); // each semester starts empty
             }
             timetable.add(yearSemesters);

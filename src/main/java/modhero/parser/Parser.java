@@ -13,7 +13,7 @@ import modhero.commands.ScheduleCommand;
 import java.util.ArrayList;
 import java.util.List;
 
-import static modhero.common.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static modhero.common.Constants.MESSAGE_INVALID_COMMAND_FORMAT;
 
 /**
  * Parses user input.

@@ -42,7 +42,7 @@ public class ModHero {
      */
     private void start() {
         this.ui = new Ui();
-        this.timetable = new Timetable(4, 4);
+        this.timetable = new Timetable();
         this.electiveList = new ModuleList();
         this.coreList = new ModuleList();
         ui.showWelcome();

@@ -1,5 +1,8 @@
 package modhero.data;
 
+import static modhero.common.Constants.NUM_TERMS;
+import static modhero.common.Constants.NUM_YEARS;
+
 import modhero.data.modules.Module;
 import modhero.data.modules.ModuleList;
 
@@ -11,31 +14,30 @@ import java.util.List;
  */
 public class Planner {
     private final Timetable timetable;
-    private final List<Module> moduleList;
-
-    final int years = 4;
-    final int terms = 4;
+    private final ModuleList moduleList;
 
     public Planner(Timetable timetable, ModuleList coreList, ModuleList electiveList) {
         this.timetable = timetable;
-        moduleList = new ArrayList<>(coreList.getList());
-        moduleList.addAll(electiveList.getList());
+        this.moduleList = coreList.merge(electiveList);
     }
 
+    /**
+     * Plan the Timetable given the moduleList
+     */
     public void planTimeTable() {
-        sortModuleList();
+        moduleList.sort();
         addToTimetable();
     }
 
-    public void sortModuleList() {
-        moduleList.sort(Module.ModuleCodeComparator);
-    }
-
+    /**
+     * Generates the recommended timetable based on the ModuleLists
+     * TODO: Needs to be adapted to use the prequisite tree, this is where our recommendation algo comes from
+     */
     public void addToTimetable() {
         for (int i = 0; i < moduleList.size(); i++) {
-            int year = (i / terms) % years;
-            int term = i % terms;
-            Module module = moduleList.get(i);
+            int year = (i / NUM_TERMS) % NUM_YEARS;
+            int term = i % NUM_TERMS;
+            Module module = moduleList.getModule(i);
             timetable.addModule(year, term, module);
         }
     }

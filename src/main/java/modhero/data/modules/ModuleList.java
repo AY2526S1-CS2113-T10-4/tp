@@ -1,15 +1,28 @@
 package modhero.data.modules;
 
-
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * A simple list wrapper for {@link Module} objects.
  * Provides basic operations to add or remove modules.
  */
 public class ModuleList {
-    private final List<Module> moduleList = new ArrayList<>();
+    private final ArrayList<Module> moduleList;
+
+    /**
+     * Initializes an empty modulelist
+     */
+    public ModuleList() {
+        this.moduleList = new ArrayList<>();
+    }
+
+    /**
+     * Initializes the module list using an existing module list
+     * @param moduleList an existing module list
+     */
+    public ModuleList(ArrayList<Module> moduleList) {
+        this.moduleList = new ArrayList<>(moduleList);
+    }
 
     /**
      * Adds a module to the list.
@@ -31,10 +44,43 @@ public class ModuleList {
     }
 
     /**
-     * Get module list
+     * Gets the size of the module list
+     * @return the size of the module list
      */
-    public List<Module> getList() {
+    public int size() {
+        return moduleList.size();
+    }
+
+    /**
+     * Get the specified course based on the index
+     * @return the module at index
+     */
+    public Module getModule(int index) {
+        return moduleList.get(index);
+    }
+
+    /**
+     * Merge the targetList into the current module list
+     * @param targetList the target module list that you want to merge
+     * @return the merged module list
+     */
+    public ModuleList merge(ModuleList targetList) {
+        ArrayList<Module> merged = new ArrayList<>(this.moduleList);
+        merged.addAll(targetList.getList());
+        return new ModuleList(merged);
+    }
+
+    /**
+     * Gets the module list
+     */
+    public ArrayList<Module> getList() {
         return moduleList;
     }
 
+    /**
+     * Sorts the modules in the module list
+     */
+    public void sort() {
+        moduleList.sort(Module.ModuleCodeComparator);
+    }
 }
