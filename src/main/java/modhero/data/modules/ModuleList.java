@@ -18,22 +18,6 @@ import modhero.storage.Storage;
  */
 public class ModuleList {
     private  final List<Module> moduleList;
-    private final Map<String, Module> moduleHashMap;
-
-    /** Optional reference to Storage for performing global lookups. */
-    private Storage storage;
-
-    /**
-     * Creates a {@code ModuleList} backed by a new empty list,
-     * with access to the provided {@link Storage} for global module lookup.
-     *
-     * @param storage the storage instance used to look up modules
-     */
-    public ModuleList(Storage storage) {
-        this.storage = storage;
-        this.moduleList = new ArrayList<>();
-        this.moduleHashMap = new HashMap<>();
-    }
 
     /**
      * Creates a {@code ModuleList} backed by a new empty list,
@@ -42,7 +26,6 @@ public class ModuleList {
      */
     public ModuleList() {
         this.moduleList = new ArrayList<>();
-        this.moduleHashMap = new HashMap<>();
     }
 
     /**
@@ -52,7 +35,6 @@ public class ModuleList {
      */
     public void add(Module module) {
         moduleList.add(module);
-        moduleHashMap.put(module.getCode(), module);
     }
 
     /**
@@ -63,7 +45,6 @@ public class ModuleList {
      */
     public void remove(int taskIndex) {
         Module removedModule = moduleList.remove(taskIndex);
-        moduleHashMap.remove(removedModule.getCode());
     }
 
     /**
@@ -72,24 +53,20 @@ public class ModuleList {
      * @param code the module code to search for
      * @return a Module with the given module code
      */
-    public Module findModuleByCode(String code) {
-        return storage.getAllModules().getHashMap().get(code);
-    }
-
-
-    /*public Module findModuleByCode(String code) {
-        for (Module m : storage.getAllModules().getList()) { if (m.getCode().equals(code)) { return m; } } return null;
-    }*/
+//    public Module findModuleByCode(String code) {
+////        return storage.getAllModules().getHashMap().get(code);
+//    }
+//
+//
+//    /*public Module findModuleByCode(String code) {
+//        for (Module m : storage.getAllModules().getList()) { if (m.getCode().equals(code)) { return m; } } return null;
+//    }*/
 
     /**
      * Get module list
      */
     public List<Module> getList() {
         return moduleList;
-    }
-
-    public Map<String, Module> getHashMap() {
-        return moduleHashMap;
     }
 
 }

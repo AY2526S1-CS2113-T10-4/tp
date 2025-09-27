@@ -28,9 +28,8 @@ public class ElectiveCommand extends Command {
     @Override
     public CommandResult execute() {
         StringBuilder feedback = new StringBuilder("Electives added: ");
-
         for (String elective : electives) {
-            Module module = electiveList.findModuleByCode(elective);
+            Module module = allModulesData.get(elective);
             if (module != null) {
                 electiveList.add(module);
                 feedback.append(elective).append(" ");

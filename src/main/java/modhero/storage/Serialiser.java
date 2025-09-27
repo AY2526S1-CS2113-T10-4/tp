@@ -56,7 +56,7 @@ public class Serialiser {
      * @param serialisedMessage array of string from store data
      * @return the deserialised array
      */
-    private List<String> deserialiseMessage(String serialisedMessage) {
+    public List<String> deserialiseMessage(String serialisedMessage) {
         List<String> message = new ArrayList<>();
         int currentIndex = 0;
         int serialisedTaskLength = serialisedMessage.length();

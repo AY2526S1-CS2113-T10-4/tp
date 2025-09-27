@@ -9,6 +9,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 /**
@@ -17,19 +18,15 @@ import java.util.Scanner;
  */
 public class Storage {
 
-    private ModuleList allModules;
-
     private final String filePath;
 
     /**
      * Creates a new {@code Storage} tied to the specified file path.
      *
      * @param filePath the path of the file to load from or save to
-     * @param allModules ModuleList that will store all modules loaded from the file
      */
-    public Storage(String filePath, ModuleList allModules) {
+    public Storage(String filePath) {
         this.filePath = filePath;
-        this.allModules = allModules;
     }
 
     /**
@@ -100,17 +97,17 @@ public class Storage {
      * Loads all modules from a data file, assuming that the file at filePath contains list of all NUS modules.
      *
      */
-    public void loadAllModules() {
-        List<String> allModulesList = load();
-        for (String code : allModulesList) {
-            String electiveName = "placeholder";
-            int numberOfMC = 0;
-            String type = "placeholder";
-            List<String> prerequisites = new ArrayList<>();
-            Module module = new Module(code, electiveName, numberOfMC, type, prerequisites);
-            allModules.add(module);
+    public void loadAllModulesData(Map<String, Module> allModulesData) {
+        Serialiser serialiser = new Serialiser();
+        List<String> rawModulesList = load();
+        List<List<String>> allModulesList = serialiser.deserialiseList(rawModulesList);
+        for (List<String> moduleArgs : allModulesList) {
+            try {
+                Module module = new Module(moduleArgs.get(0), moduleArgs.get(1), Integer.parseInt(moduleArgs.get(2)), moduleArgs.get(3), serialiser.deserialiseMessage(moduleArgs.get(4)));
+                allModulesData.put(module.getCode(), module);
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid module code");
+            }
         }
     }
-
-    public ModuleList getAllModules() { return allModules; }
 }

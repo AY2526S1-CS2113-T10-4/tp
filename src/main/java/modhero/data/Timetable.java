@@ -42,7 +42,7 @@ public class Timetable {
      * @param module the module to add
      */
     public void addModule(int year, int term, Module module) {
-        timetable.get(year-1).get(term-1).add(module);
+        timetable.get(year).get(term).add(module);
     }
 
     /**

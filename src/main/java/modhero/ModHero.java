@@ -4,10 +4,14 @@ import modhero.commands.Command;
 import modhero.commands.CommandResult;
 import modhero.commands.ExitCommand;
 import modhero.data.Timetable;
+import modhero.data.modules.Module;
 import modhero.data.modules.ModuleList;
 import modhero.parser.Parser;
 import modhero.ui.Ui;
 import modhero.storage.Storage;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Entry point of the ModHero application.
@@ -19,7 +23,7 @@ public class ModHero {
     private ModuleList electiveList;
     private ModuleList coreList;
     private Storage storage;
-    private ModuleList allModules;
+    private Map<String, Module> allModulesData;
 
     /**
      * Launches the ModHero application.
@@ -46,11 +50,11 @@ public class ModHero {
     private void start() {
         this.ui = new Ui();
         this.timetable = new Timetable(4, 4);
-        this.allModules = new ModuleList();
-        this.storage = new Storage("./src/main/java/modhero/data/data.txt", allModules);
-        storage.loadAllModules();
-        this.electiveList = new ModuleList(storage);
-        this.coreList = new ModuleList(storage);
+        this.storage = new Storage("data/data.txt");
+        this.allModulesData = new HashMap<>();
+        storage.loadAllModulesData(allModulesData);
+        this.electiveList = new ModuleList();
+        this.coreList = new ModuleList();
         ui.showWelcome();
     }
 
@@ -83,7 +87,7 @@ public class ModHero {
      */
     private CommandResult executeCommand(Command command) {
         try {
-            command.setData(timetable, electiveList, coreList, storage);
+            command.setData(timetable, electiveList, coreList, allModulesData);
             CommandResult result = command.execute();
             return result;
         } catch (Exception e) {
