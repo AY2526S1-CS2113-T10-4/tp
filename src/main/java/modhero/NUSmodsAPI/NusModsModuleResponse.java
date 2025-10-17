@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.ArrayList;
 
 import modhero.data.modules.Module;
+import modhero.data.modules.PreReqTree;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NusModsModuleResponse {
@@ -12,21 +13,21 @@ public class NusModsModuleResponse {
     public String title;
     public String moduleCode;
     public int moduleCredit;
-    public ArrayList<String> fulfillRequirements;
+    public PreReqTree preReqTree;
 
     public NusModsModuleResponse( ){
         acadYear = new String();
         title = new String();
         moduleCode = new String();
-        fulfillRequirements = new ArrayList<String>();
+        preReqTree = new PreReqTree();
     }
 
     public void printMod(){
-        System.out.println("Response:\n" + acadYear+ "\n" + title + "\n" + moduleCode + "\n" + fulfillRequirements.toString());
+        System.out.println("Response:\n" + acadYear+ "\n" + title + "\n" + moduleCode + "\n" + preReqTree.toString());
     }
 
     protected Module responseToModule(){
-     Module module = new Module(moduleCode, title, moduleCredit,"elective", fulfillRequirements);
+     Module module = new Module(moduleCode, title, moduleCredit,"elective", preReqTree);
      return module;
     }
 }
