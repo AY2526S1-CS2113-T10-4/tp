@@ -17,7 +17,7 @@ public class Module {
     private String name;    // e.g. Software Engineering
     private int mc;         // e.g. modular credits
     private String type;    // e.g. core, elective, etc.
-    private List<String> prerequisites; // e.g. ["CS1010", "CS1231"]
+    private PreReqTree prerequisites; // e.g. ["CS1010", "CS1231"]
 
     /**
      * Creates a new Module object.
@@ -28,7 +28,7 @@ public class Module {
      * @param type the module type (e.g., core, elective)
      * @param prerequisites the list of prerequisite module codes
      */
-    public Module(String code, String name, int mc, String type, List<String> prerequisites) {
+    public Module(String code, String name, int mc, String type, PreReqTree prerequisites) {
         assert code != null && !code.isEmpty() : "Module code must not be empty";
         assert name != null && !name.isEmpty() : "Module name must not be empty";
         assert type != null && !type.isEmpty() : "Module type must not be empty";
@@ -67,7 +67,7 @@ public class Module {
     }
 
     /** @return the list of prerequisite module codes */
-    public List<String> getPrerequisites() {
+    public PreReqTree getPrerequisites() {
         return prerequisites;
     }
 
@@ -84,7 +84,7 @@ public class Module {
                 + serialiser.serialiseMessage(name)
                 + serialiser.serialiseMessage(Integer.toString(mc))
                 + serialiser.serialiseMessage(type)
-                + serialiser.serialiseList(prerequisites);
+                + serialiser.serialisePreReqTree(prerequisites);
 
         logger.log(Level.FINEST, "Successful serialising module: " + code);
         return formattedString;

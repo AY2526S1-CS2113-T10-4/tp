@@ -1,5 +1,6 @@
 package modhero.storage;
 
+import modhero.data.modules.PreReqTree;
 import modhero.exception.CorruptedDataFileException;
 
 import java.util.ArrayList;
@@ -138,5 +139,10 @@ public class Serialiser {
         } catch (NumberFormatException e) {
             return -1;
         }
+    }
+
+    public String serialisePreReqTree(PreReqTree preReqTree){
+        //Todo write this method
+        return null;
     }
 }
