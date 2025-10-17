@@ -4,11 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 
+import modhero.data.modules.Module;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class NusModsModuleResponse {
     public String acadYear;
     public String title;
     public String moduleCode;
+    public int moduleCredit;
     public ArrayList<String> fulfillRequirements;
 
     public NusModsModuleResponse( ){
@@ -17,15 +20,14 @@ public class NusModsModuleResponse {
         moduleCode = new String();
         fulfillRequirements = new ArrayList<String>();
     }
-    public NusModsModuleResponse( String acadYear, String title, String moduleCode, ArrayList<String> fulfillRequirements){
-        this.acadYear = acadYear;
-        this.title = title;
-        this.moduleCode = moduleCode;
-        this.fulfillRequirements = fulfillRequirements;
-    }
 
     public void printMod(){
         System.out.println("Response:\n" + acadYear+ "\n" + title + "\n" + moduleCode + "\n" + fulfillRequirements.toString());
+    }
+
+    protected Module responseToModule(){
+     Module module = new Module(moduleCode, title, moduleCredit,"elective", fulfillRequirements);
+     return module;
     }
 }
 

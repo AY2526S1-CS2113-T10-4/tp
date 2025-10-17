@@ -5,42 +5,40 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import modhero.data.modules.Module;
 
-import com.fasterxml.jackson.core.JacksonException;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class ModuleInformationFetcher {
-    private URL url;
     private ObjectMapper mapper = new ObjectMapper();
+    private final String BASE_API ="https://api.nusmods.com/v2/";
+    private String year = "2025-2026";
+    private HttpClient client;
 
     public ModuleInformationFetcher() {
-        try {
-            HttpClient client = HttpClient.newBuilder()
-                    .version(HttpClient.Version.HTTP_1_1)
-                    .followRedirects(HttpClient.Redirect.NORMAL)
-                    .connectTimeout(Duration.ofSeconds(20))
-                    .build();
-            HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.nusmods.com/v2/2025-2026/modules/CS1010.json"))
-                    .header("accept", "application/json").build();
-            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-           // System.out.println(response.statusCode());
-            //System.out.println(response.body());
-            NusModsModuleResponse apiResponse = mapper.readValue(response.body(), NusModsModuleResponse.class);
-            apiResponse.printMod();
+        this.client = HttpClient.newBuilder()
+               .version(HttpClient.Version.HTTP_1_1)
+               .followRedirects(HttpClient.Redirect.NORMAL)
+               .connectTimeout(Duration.ofSeconds(20))
+               .build();
+    }
 
-        }catch (MalformedURLException e){
-            System.out.println("Check the url format");
-        }catch (JacksonException exception){
-            System.out.println(exception.getOriginalMessage());
-        } catch (IOException e){
-            System.out.println("Connection error");
+    public Module fetchModuleByCode(String input){
+        String code = input.toUpperCase();
+        String apiQuery = BASE_API + "/" + year + "/modules/" + code + ".json";
+        HttpRequest request = HttpRequest.newBuilder(URI.create(apiQuery))
+                .header("accept", "application/json").build();
+        try {
+            HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            NusModsModuleResponse apiResponse = mapper.readValue(response.body(), NusModsModuleResponse.class);
+            Module module = apiResponse.responseToModule();
+            return module;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public Module fetchByCode(){
-        return null;
     }
 }
 
