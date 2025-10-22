@@ -21,6 +21,9 @@ public class Planner {
 
     private final Timetable timetable;
     private final List<Module> moduleList;
+    private PrereqGraph prereqGraph;
+    private List<Module> sortedModuleList;
+
 
     final int years = 4;
     final int terms = 2;

@@ -32,35 +32,30 @@ public class Storage {
      */
     public Storage(String filePath) {
         assert filePath != null && !filePath.isEmpty() : "File path must not be empty";
-
         this.filePath = filePath;
     }
 
     /** Ensures that the directory for the file path exists. */
     public void ensureFileDirectoryExist() {
         new File(filePath).getParentFile().mkdirs();
-
         logger.log(Level.FINEST, "Ensured directory existence");
     }
 
     /**
      * Ensures that the file exists.
      * Creates file if not present.
-     * @throws IOException if an I/O error occurs during creating
      */
     private void ensureFileExist() throws IOException {
         File file = new File(filePath);
         if (!file.exists()) {
             file.createNewFile();
         }
-
         logger.log(Level.FINEST, "Ensured file existence");
     }
 
     /** Loads the file contents into a list of strings, each line a list element. */
     public List<String> load() {
         logger.log(Level.FINEST, "Loading file: " + filePath);
-
         try {
             ensureFileDirectoryExist();
             ensureFileExist();
@@ -79,8 +74,7 @@ public class Storage {
         while (s.hasNext()) {
             rawTaskList.add(s.nextLine());
         }
-
-        logger.log(Level.FINEST, "Read file has " + rawTaskList.size() + " of sentences: ");
+        logger.log(Level.FINEST, "Read file has " + rawTaskList.size() + " lines.");
         return rawTaskList;
     }
 
@@ -88,7 +82,6 @@ public class Storage {
     public void save(String textToAdd) {
         assert textToAdd != null : "save textToAdd must not be null";
         logger.log(Level.FINEST, "Saving file: " + filePath);
-
         try {
             ensureFileDirectoryExist();
             writeToFile(textToAdd);
@@ -100,12 +93,10 @@ public class Storage {
     /** Writes the provided text content to the file at filePath. */
     private void writeToFile(String textToAdd) throws IOException {
         assert textToAdd != null : "writeToFile textToAdd must not be null";
-
         FileWriter fileWriter = new FileWriter(filePath);
         fileWriter.write(textToAdd);
         fileWriter.close();
-
-        logger.log(Level.FINEST, "Save file characters: " + textToAdd.length());
+        logger.log(Level.FINEST, "Saved file with " + textToAdd.length() + " characters");
     }
 
     /**
@@ -118,18 +109,16 @@ public class Storage {
 
         Serialiser serialiser = new Serialiser();
         List<String> rawModulesList = load();
-
         if (rawModulesList == null) {
-            System.out.println("⚠️ No module data file found at " + filePath);
+            System.out.println(" No module data file found at " + filePath);
             return;
         }
 
         List<List<String>> allModulesList = serialiser.deserialiseList(rawModulesList);
-
         for (List<String> moduleArgs : allModulesList) {
             if (moduleArgs.size() != 5) {
                 logger.log(Level.WARNING, "Incorrect number of arguments for module: " + moduleArgs.size());
-                break;
+                continue;
             }
             try {
                 // Convert old-style flat prerequisites to new nested structure
@@ -148,13 +137,52 @@ public class Storage {
                 );
 
                 allModulesData.put(module.getCode(), module);
-
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid MC value for module: " + moduleArgs);
             } catch (Exception e) {
-                System.out.println("Error parsing module: " + e.getMessage());
+                logger.log(Level.WARNING, "Error parsing module: " + e.getMessage());
             }
         }
-        return moduleList;
+    }
+
+    /**
+     * Loads all majors from a data file, linking their core modules.
+     */
+    public void loadAllMajorsData(Map<String, Module> allModulesData, Map<String, Major> allMajorsData)
+            throws CorruptedDataFileException {
+        assert allModulesData != null : "allModulesData must not be null";
+        assert allMajorsData != null : "allMajorsData must not be null";
+        logger.log(Level.FINEST, "Loading all majors data");
+
+        Serialiser serialiser = new Serialiser();
+        List<String> rawMajorsList = load();
+        if (rawMajorsList == null) {
+            System.out.println(" No major data file found at " + filePath);
+            return;
+        }
+
+        List<List<String>> allMajorsList = serialiser.deserialiseList(rawMajorsList);
+        for (List<String> majorArgs : allMajorsList) {
+            if (majorArgs.size() < 3) {
+                logger.log(Level.WARNING, "Invalid major data: " + majorArgs);
+                continue;
+            }
+
+            String majorName = majorArgs.get(0);
+            String abbrName = majorArgs.get(1);
+            String moduleCodesRaw = majorArgs.get(2);
+
+            String[] moduleCodes = moduleCodesRaw.split(",");
+            ModuleList moduleList = new ModuleList();
+            for (String code : moduleCodes) {
+                Module module = allModulesData.get(code.trim());
+                if (module != null) {
+                    moduleList.add(module);
+                }
+            }
+
+            Major major = new Major(majorName, abbrName, moduleList);
+            allMajorsData.put(majorName, major);
+        }
+
+        logger.log(Level.FINEST, "Successfully loaded " + allMajorsData.size() + " majors");
     }
 }

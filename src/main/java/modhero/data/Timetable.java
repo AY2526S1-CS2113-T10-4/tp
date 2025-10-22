@@ -14,6 +14,7 @@ import java.util.logging.Logger;
  * by year and semester.
  */
 public class Timetable {
+    public static final Logger logger = Logger.getLogger(Timetable.class.getName());
     private final int COL_WIDTH = 20; // column width for nice alignment
     private List<List<List<Module>>> timetable;
 
@@ -44,14 +45,17 @@ public class Timetable {
 
     /** Removes a module by code from a specific year/semester. */
     public boolean removeModule(int year, int sem, String moduleCode) {
-        return timetable.get(year).get(sem)
+        boolean hasRemoved = timetable.get(year).get(sem)
                 .removeIf(m -> m.getCode().equals(moduleCode));
 
         if (hasRemoved) {
-            logger.log(Level.FINEST, () -> String.format("Module %s removed from year %d term %d", moduleCode, year, term));
+            logger.log(Level.FINEST, () ->
+                    String.format("Module %s removed from year %d sem %d", moduleCode, year, sem));
         }
+
         return hasRemoved;
     }
+
 
     /** Gets all modules for a specific year/semester. */
     public List<Module> getModules(int year, int sem) {

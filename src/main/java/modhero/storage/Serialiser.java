@@ -56,8 +56,9 @@ public class Serialiser {
      *
      * @param serialisedList list of serialised strings
      * @return the deserialised nested list
+     * @throws CorruptedDataFileException if corrupted data is detected
      */
-    public List<List<String>> deserialiseList(List<String> serialisedList) {
+    public List<List<String>> deserialiseList(List<String> serialisedList) throws CorruptedDataFileException {
         List<List<String>> deserialisedList = new ArrayList<>();
         for (String serialisedMessage : serialisedList) {
             List<String> message = deserialiseMessage(serialisedMessage);
@@ -75,7 +76,7 @@ public class Serialiser {
     /**
      * Deserialises serialised string in array.
      *
-     * @param serialisedMessage array of string from store data
+     * @param serialisedMessage array of string from stored data
      * @return the deserialised array
      */
     public List<String> deserialiseMessage(String serialisedMessage) {
@@ -87,15 +88,13 @@ public class Serialiser {
 
         while (currentIndex < serialisedTaskLength) {
             int delimiterIndex = serialisedMessage.indexOf(DELIMITER, currentIndex);
-            boolean isDelimiterMissing = delimiterIndex == -1;
-            if (isDelimiterMissing) {
+            if (delimiterIndex == -1) {
                 logger.log(Level.WARNING, "Delimiter missing during deserialisation, " + serialisedMessage);
                 return null;
             }
 
             int argumentLength = parseArgumentLength(serialisedMessage, currentIndex, delimiterIndex);
-            boolean isArgumentLengthCorrupted = argumentLength == -1;
-            if (isArgumentLengthCorrupted) {
+            if (argumentLength == -1) {
                 logger.log(Level.WARNING, "Invalid argument length encountered, " + serialisedMessage);
                 return null;
             }
@@ -112,7 +111,7 @@ public class Serialiser {
             currentIndex = nextIndex + EXTRA_DELIMITER.length();
         }
 
-        logger.log(Level.FINEST, "Successful deserialising:" + serialisedMessage);
+        logger.log(Level.FINEST, "Successful deserialising: " + serialisedMessage);
         return message;
     }
 

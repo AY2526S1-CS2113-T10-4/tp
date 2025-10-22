@@ -18,15 +18,15 @@ public class PrereqGraph {
      */
     public PrereqGraph(List<Module> modules) {
         this.modules = modules;
-        buildGraph();
+        buildGraph(); // now works properly — no args needed
     }
 
     /**
      * Constructs the adjacency list representation of the prerequisite graph.
-     *
-     * @param modules list of all modules to include
+     * Each module is initialized as a key, and for every prerequisite combination,
+     * edges are added from prerequisite → dependent module.
      */
-    private void buildGraph(List<Module> modules) {
+    private void buildGraph() {
         // Initialize all modules as keys
         for (Module m : modules) {
             graph.putIfAbsent(m.getCode(), new ArrayList<>());
@@ -43,7 +43,7 @@ public class PrereqGraph {
                     graph.computeIfAbsent(prereq, k -> new ArrayList<>()).add(m.getCode());
                 }
             }
-        }*/
+        }
     }
 
     /** Returns the adjacency list (module → list of dependents). */
