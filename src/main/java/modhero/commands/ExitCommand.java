@@ -1,9 +1,13 @@
 package modhero.commands;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Terminates the program.
  */
 public class ExitCommand extends Command {
+    public static final Logger logger = Logger.getLogger(ExitCommand.class.getName());
 
     public static final String COMMAND_WORD = "exit";
 
@@ -12,12 +16,8 @@ public class ExitCommand extends Command {
 
     @Override
     public CommandResult execute() {
+        logger.log(Level.INFO, "Executing Exit Command");
         return new CommandResult("Goodbye!");
-    }
-
-    @Override
-    public boolean isExit() {
-        return true;
     }
 
     public static boolean isExit(Command command) {

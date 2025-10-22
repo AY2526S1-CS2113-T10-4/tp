@@ -1,5 +1,7 @@
 package modhero.parser;
 
+import static modhero.common.Constants.MESSAGE_INVALID_COMMAND_FORMAT;
+
 import modhero.commands.ClearCommand;
 import modhero.commands.Command;
 import modhero.commands.DeleteCommand;
@@ -9,21 +11,18 @@ import modhero.commands.HelpCommand;
 import modhero.commands.IncorrectCommand;
 import modhero.commands.MajorCommand;
 import modhero.commands.ScheduleCommand;
-import modhero.data.Timetable;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static modhero.common.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
-
-import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Parses user input.
  */
 public class Parser {
+    public static final Logger logger = Logger.getLogger(Parser.class.getName());
 
     /**
      * Parses user input into command for execution.
@@ -32,6 +31,9 @@ public class Parser {
      * @return the command based on the user input
      */
     public Command parseCommand(String userInput) {
+        assert userInput != null : "User input must not be null";
+        logger.log(Level.FINEST, "Parsing command: " + userInput);
+
         String[] words = userInput.trim().split(" ", 2);  // split the input into command and arguments
         if (words.length == 0) {
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
@@ -39,28 +41,21 @@ public class Parser {
 
         final String commandWord = words[0];
         final String arguments = userInput.replaceFirst(commandWord, "").trim();
+        logger.log(Level.FINEST, "Selecting command: " + commandWord);
 
         switch (commandWord) {
-
         case MajorCommand.COMMAND_WORD:
             return prepareMajorCommand(arguments);
-
-        /* Parses arguments in the context of the elective command.*/
         case ElectiveCommand.COMMAND_WORD:
             return prepareElectiveCommand(arguments);
-
         case DeleteCommand.COMMAND_WORD:
             return prepareDeleteCommand(arguments);
-
         case ScheduleCommand.COMMAND_WORD:
             return new ScheduleCommand();
-
         case ClearCommand.COMMAND_WORD:
             return new ClearCommand();
-
         case ExitCommand.COMMAND_WORD:
             return new ExitCommand();
-
         case HelpCommand.COMMAND_WORD:
             return new HelpCommand();
         default:
@@ -84,6 +79,7 @@ public class Parser {
         String[] majorAndSpecialise = majorAndMinor[0].split(MajorCommand.SPECIALISATION_REGEX, 2);
         String specialisation = majorAndSpecialise.length > 1 ? majorAndSpecialise[1].trim() : "";
         String major = majorAndSpecialise[0].trim();
+
         return new MajorCommand(major, specialisation, minor);
     }
 
@@ -110,5 +106,4 @@ public class Parser {
         }
         return new DeleteCommand(electiveList);
     }
-
 }

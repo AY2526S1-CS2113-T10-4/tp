@@ -1,9 +1,15 @@
 package modhero.commands;
 
+import modhero.data.major.Major;
+
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Defines your primary degree major, which ModHero uses to load graduation requirements.
  */
 public class MajorCommand extends Command {
+    public static final Logger logger = Logger.getLogger(MajorCommand.class.getName());
 
     public static final String COMMAND_WORD = "major";
     public static final String SPECIALISATION_REGEX = "specialisation";
@@ -18,13 +24,29 @@ public class MajorCommand extends Command {
     private final String minor;
 
     public MajorCommand(String major, String specialisation, String minor) {
+        assert major != null && !major.isEmpty() : "Major name must not be empty";
+
         this.major = major;
         this.specialisation = specialisation;
         this.minor = minor;
+
+        logger.log(Level.FINEST, "Create major: ", major + specialisation + minor);
+
     }
 
     @Override
     public CommandResult execute() {
-        return new CommandResult(major + "|" + specialisation + "|" + minor);
+        logger.log(Level.INFO, "Executing Major Command");
+
+        Major majorObj = allMajorsData.get(major);
+        if (majorObj == null) {
+            logger.log(Level.WARNING, () -> "Major not found: " + major);
+            return new CommandResult("Failed to retrieve major " + major);
+        }
+
+        logger.log(Level.FINE, () -> "Setting major: " + major);
+        coreList.setList(majorObj.getModules().getList());
+        return new CommandResult(major + (specialisation == null ? "" : "|" + specialisation)
+                + (minor == null ? "" : "|" + minor));
     }
 }

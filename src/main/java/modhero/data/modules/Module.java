@@ -2,14 +2,17 @@ package modhero.data.modules;
 
 import modhero.storage.Serialiser;
 
-import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a module at NUS, including its code, name, modular credits,
  * type, and prerequisites (which can include AND/OR combinations).
  */
 public class Module {
+    public static final Logger logger = Logger.getLogger(Module.class.getName());
+
     private String code;    // e.g. CS2113
     private String name;    // e.g. Software Engineering
     private int mc;         // e.g. modular credits
@@ -35,6 +38,8 @@ public class Module {
         this.mc = mc;
         this.type = type;
         this.prerequisites = prerequisites;
+
+        logger.log(Level.FINEST, "Module created: " + name + " (" + code + ")");
     }
 
     /** Getters */

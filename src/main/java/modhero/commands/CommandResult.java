@@ -1,5 +1,7 @@
 package modhero.commands;
 
+import modhero.data.modules.Module;
+
 /**
  * Represents the result of executing a command.
  * Contains feedback for the user, optionally a relevant module,

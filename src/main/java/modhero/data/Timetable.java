@@ -1,8 +1,13 @@
 package modhero.data;
 
+import static modhero.common.Constants.NUM_TERMS;
+import static modhero.common.Constants.NUM_YEARS;
+
 import modhero.data.modules.Module;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Represents a multi-year academic timetable, storing modules organized
@@ -28,6 +33,8 @@ public class Timetable {
             }
             timetable.add(yearSemesters);
         }
+
+        logger.log(Level.FINE, () -> String.format("Timetable initialised for %d years and %d terms", NUM_YEARS, NUM_TERMS));
     }
 
     /** Adds a module to a specific year and semester. */
@@ -39,6 +46,11 @@ public class Timetable {
     public boolean removeModule(int year, int sem, String moduleCode) {
         return timetable.get(year).get(sem)
                 .removeIf(m -> m.getCode().equals(moduleCode));
+
+        if (hasRemoved) {
+            logger.log(Level.FINEST, () -> String.format("Module %s removed from year %d term %d", moduleCode, year, term));
+        }
+        return hasRemoved;
     }
 
     /** Gets all modules for a specific year/semester. */

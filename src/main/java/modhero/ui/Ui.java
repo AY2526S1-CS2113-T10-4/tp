@@ -3,6 +3,7 @@ package modhero.ui;
 import java.util.Scanner;
 
 import modhero.commands.CommandResult;
+import modhero.data.modules.Module;
 
 /**
  * Handles all interactions with the user, including displaying messages
@@ -74,6 +75,8 @@ public class Ui {
      * @param result The {@code CommandResult} containing feedback and relevant module information.
      */
     public void showResultToUser(CommandResult result) {
+        assert result != null : "CommandResult must not be null";
+
         System.out.println(result.getFeedbackToUser());
 
         Module module = result.getrelevantModule();

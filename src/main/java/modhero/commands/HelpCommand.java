@@ -1,9 +1,13 @@
 package modhero.commands;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Shows help instructions.
  */
 public class HelpCommand extends Command {
+    public static final Logger logger = Logger.getLogger(HelpCommand.class.getName());
 
     public static final String COMMAND_WORD = "help";
 
