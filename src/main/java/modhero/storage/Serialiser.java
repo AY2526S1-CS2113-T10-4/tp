@@ -42,8 +42,6 @@ public class Serialiser {
      * @return the deserialised nested list
      */
     public List<List<String>> deserialiseList(List<String> serialisedList) {
-        if  (serialisedList == null) { return new ArrayList<>(); }
-
         List<List<String>> deserialisedList = new ArrayList<>();
         for (String serialisedMessage : serialisedList) {
             List<String> message = deserialiseMessage(serialisedMessage);

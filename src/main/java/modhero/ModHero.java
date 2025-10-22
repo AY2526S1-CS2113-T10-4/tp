@@ -49,7 +49,7 @@ public class ModHero {
      */
     private void start() {
         this.ui = new Ui();
-        this.timetable = new Timetable(4, 4);
+        this.timetable = new Timetable(4, 2);
         this.storage = new Storage("data/data.txt");
         this.allModulesData = new HashMap<>();
         storage.loadAllModulesData(allModulesData);

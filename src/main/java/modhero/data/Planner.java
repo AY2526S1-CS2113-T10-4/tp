@@ -14,7 +14,7 @@ public class Planner {
     private final List<Module> moduleList;
 
     final int years = 4;
-    final int terms = 4;
+    final int terms = 2;
 
     public Planner(Timetable timetable, ModuleList coreList, ModuleList electiveList) {
         this.timetable = timetable;

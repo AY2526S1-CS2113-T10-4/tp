@@ -29,19 +29,12 @@ public class Storage {
         this.filePath = filePath;
     }
 
-    /**
-     * Ensures that the directory for the file path exists.
-     * Creates directories if not present.
-     */
+    /** Ensures that the directory for the file path exists. */
     public void ensureFileDirectoryExist() {
         new File(filePath).getParentFile().mkdirs();
     }
 
-    /**
-     * Loads the file contents into a list of strings, each line a list element.
-     *
-     * @return list of lines from file, or null if file not found
-     */
+    /** Loads the file contents into a list of strings, each line a list element. */
     public List<String> load() {
         try {
             ensureFileDirectoryExist();
@@ -51,12 +44,7 @@ public class Storage {
         }
     }
 
-    /**
-     * Reads all lines from the file at filePath.
-     *
-     * @return list of strings read line-by-line from the file
-     * @throws FileNotFoundException when the file does not exist
-     */
+    /** Reads all lines from the file at filePath. */
     private List<String> readFromFile() throws FileNotFoundException {
         File file = new File(filePath);
         Scanner s = new Scanner(file);
@@ -67,11 +55,7 @@ public class Storage {
         return rawTaskList;
     }
 
-    /**
-     * Saves the given text string to the file, overwriting any existing content.
-     *
-     * @param textToAdd the text content to save
-     */
+    /** Saves the given text string to the file, overwriting any existing content. */
     public void save(String textToAdd) {
         try {
             ensureFileDirectoryExist();
@@ -81,12 +65,7 @@ public class Storage {
         }
     }
 
-    /**
-     * Writes the provided text content to the file at filePath.
-     *
-     * @param textToAdd text to write to the file
-     * @throws IOException if an I/O error occurs during writing
-     */
+    /** Writes the provided text content to the file at filePath. */
     private void writeToFile(String textToAdd) throws IOException {
         FileWriter fileWriter = new FileWriter(filePath);
         fileWriter.write(textToAdd);
@@ -94,19 +73,43 @@ public class Storage {
     }
 
     /**
-     * Loads all modules from a data file, assuming that the file at filePath contains list of all NUS modules.
-     *
+     * Loads all modules from a data file, assuming that the file at filePath
+     * contains a serialized list of all NUS modules.
      */
     public void loadAllModulesData(Map<String, Module> allModulesData) {
         Serialiser serialiser = new Serialiser();
         List<String> rawModulesList = load();
+
+        if (rawModulesList == null) {
+            System.out.println("⚠️ No module data file found at " + filePath);
+            return;
+        }
+
         List<List<String>> allModulesList = serialiser.deserialiseList(rawModulesList);
+
         for (List<String> moduleArgs : allModulesList) {
             try {
-                Module module = new Module(moduleArgs.get(0), moduleArgs.get(1), Integer.parseInt(moduleArgs.get(2)), moduleArgs.get(3), serialiser.deserialiseMessage(moduleArgs.get(4)));
+                // Convert old-style flat prerequisites to new nested structure
+                List<String> prereqFlat = serialiser.deserialiseMessage(moduleArgs.get(4));
+                List<List<String>> prereqNested = new ArrayList<>();
+                if (prereqFlat != null && !prereqFlat.isEmpty()) {
+                    prereqNested.add(prereqFlat); // Wrap old data in a single OR group
+                }
+
+                Module module = new Module(
+                        moduleArgs.get(0),
+                        moduleArgs.get(1),
+                        Integer.parseInt(moduleArgs.get(2)),
+                        moduleArgs.get(3),
+                        prereqNested
+                );
+
                 allModulesData.put(module.getCode(), module);
+
             } catch (NumberFormatException e) {
-                System.out.println("Invalid module code");
+                System.out.println("Invalid MC value for module: " + moduleArgs);
+            } catch (Exception e) {
+                System.out.println("Error parsing module: " + e.getMessage());
             }
         }
     }

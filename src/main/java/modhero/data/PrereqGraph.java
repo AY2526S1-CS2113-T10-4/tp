@@ -3,6 +3,11 @@ package modhero.data;
 import modhero.data.modules.Module;
 import java.util.*;
 
+/**
+ * Builds and manages a prerequisite dependency graph between modules.
+ * Each module is a node, and edges represent prerequisite relationships.
+ * Example: CS1010 → CS2030 means CS1010 must be taken before CS2030.
+ */
 public class PrereqGraph {
     private final HashMap<String, List<String>> graph = new HashMap<>();
 
@@ -14,6 +19,11 @@ public class PrereqGraph {
         buildGraph(modules);
     }
 
+    /**
+     * Constructs the adjacency list representation of the prerequisite graph.
+     *
+     * @param modules list of all modules to include
+     */
     private void buildGraph(List<Module> modules) {
         // Initialize all modules as keys
         for (Module m : modules) {
@@ -22,8 +32,14 @@ public class PrereqGraph {
 
         // For each module, add edges from each prerequisite → this module
         for (Module m : modules) {
-            for (String prereq : m.getPrerequisites()) {
-                graph.computeIfAbsent(prereq, k -> new ArrayList<>()).add(m.getCode());
+            List<List<String>> prereqCombos = m.getPrerequisites();
+            if (prereqCombos == null) continue;
+
+            // Each inner list = one valid prerequisite combination (e.g. AND group)
+            for (List<String> combo : prereqCombos) {
+                for (String prereq : combo) {
+                    graph.computeIfAbsent(prereq, k -> new ArrayList<>()).add(m.getCode());
+                }
             }
         }
     }
