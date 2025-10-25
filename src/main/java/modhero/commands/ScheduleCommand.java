@@ -1,29 +1,23 @@
 package modhero.commands;
 
-import modhero.data.timetable.Planner;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Generates a personalised 4-year study plan, factoring in prerequisites, NUSMods module availability, exchanges, and graduation requirements.
+ * Displays the current 4-year study plan (already populated when a major is set).
  */
 public class ScheduleCommand extends Command {
 
     public static final String COMMAND_WORD = "schedule";
-
-    public static final String MESSAGE_USAGE = COMMAND_WORD + ": Returns recommended Year 1 and Year 2 mods, including core modules.\n"
-            + "  Example: " + COMMAND_WORD;
-
-    public static final Logger logger = Logger.getLogger(ScheduleCommand.class.getName());
+    private static final Logger logger = Logger.getLogger(ScheduleCommand.class.getName());
 
     @Override
     public CommandResult execute() {
         logger.log(Level.INFO, "Executing Schedule Command");
 
-        Planner planner = new Planner(data, coreList, electiveList);
-        planner.planTimeTable();
+        // Just display the timetable; don’t rebuild or print module codes
         data.printTimetable();
-        return new CommandResult(MESSAGE_USAGE);
+
+        return new CommandResult("Here's your recommended 4-year schedule above!");
     }
 }

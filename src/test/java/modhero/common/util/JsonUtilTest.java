@@ -1,9 +1,7 @@
-package modhero.parser;
+package modhero.common.util;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import modhero.common.util.JsonUtil;
 
 class JsonUtilTest {
     private final JsonUtil extractor = new JsonUtil();

@@ -2,15 +2,7 @@ package modhero.parser;
 
 import static modhero.common.Constants.MESSAGE_INVALID_COMMAND_FORMAT;
 
-import modhero.commands.ClearCommand;
-import modhero.commands.Command;
-import modhero.commands.DeleteCommand;
-import modhero.commands.ElectiveCommand;
-import modhero.commands.ExitCommand;
-import modhero.commands.HelpCommand;
-import modhero.commands.IncorrectCommand;
-import modhero.commands.MajorCommand;
-import modhero.commands.ScheduleCommand;
+import modhero.commands.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -58,6 +50,8 @@ public class Parser {
             return new ExitCommand();
         case HelpCommand.COMMAND_WORD:
             return new HelpCommand();
+        case "add":
+            return prepareAddCommand(arguments);
         default:
             return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE));
         }
@@ -106,4 +100,29 @@ public class Parser {
         }
         return new DeleteCommand(electiveList);
     }
+
+    private Command prepareAddCommand(String args) {
+        if (args.isEmpty()) {
+            return new IncorrectCommand(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+        }
+
+        // Expect format: add CS3240 to Y3S2
+        String[] parts = args.split("\\s+to\\s+");
+        if (parts.length != 2) {
+            return new IncorrectCommand("Invalid format. Use: add MODULE_CODE to YxSy");
+        }
+
+        String moduleCode = parts[0].trim();
+        String destination = parts[1].trim().toUpperCase(); // Y3S2
+
+        if (!destination.matches("Y\\dS\\d")) {
+            return new IncorrectCommand("Invalid year/semester format. Use YxSy (e.g. Y2S1)");
+        }
+
+        int year = Character.getNumericValue(destination.charAt(1));
+        int semester = Character.getNumericValue(destination.charAt(3));
+
+        return new AddCommand(moduleCode, year, semester);
+    }
+
 }

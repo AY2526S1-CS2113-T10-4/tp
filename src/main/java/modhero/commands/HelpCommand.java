@@ -16,15 +16,42 @@ public class HelpCommand extends Command {
 
     @Override
     public CommandResult execute() {
-        logger.log(Level.INFO, "Executing Help Command");
 
-        String helpMessage = MajorCommand.MESSAGE_USAGE
-                + '\n' + ElectiveCommand.MESSAGE_USAGE
-                + '\n' + DeleteCommand.MESSAGE_USAGE
-                + '\n' + ScheduleCommand.MESSAGE_USAGE
-                + '\n' + ClearCommand.MESSAGE_USAGE
-                + '\n' + HelpCommand.MESSAGE_USAGE
-                + '\n' + ExitCommand.MESSAGE_USAGE;
+        String helpMessage = """
+            ┌────────────────────────────────────────────────────────────────┐
+            │                          ModHero Help                          │
+            ├────────────┬───────────────────────────────────────────────────┤
+            │ Command    │ Description                                       │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ help       │ Show this help message                            │
+            │            │ Format: help                                      │
+            │            │ Example: help                                     │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ major      │ Specify your major                                │
+            │            │ Format: major MAJOR_NAME                          │
+            │            │ Example: major Computer Science                   │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ add        │ Add elective modules to specific Year & Semester  │
+            │            │ Format: add MODULE_CODE to Y_S_                   │
+            │            │ Example: add CS3240 to Y2S2                       │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ delete     │ Remove elective modules                           │
+            │            │ Format: delete MODULE_CODE                        │
+            │            │ Example: delete CS2109S                           │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ schedule   │ Generate your recommended 4-Year Study Plan       │
+            │            │ Format: schedule                                  │
+            │            │ Example: schedule                                 │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ clear      │ Clear all modules in the plan                     │
+            │            │ Format: clear                                     │
+            │            │ Example: clear                                    │
+            ├────────────┼───────────────────────────────────────────────────┤
+            │ exit       │ Exit the program                                  │
+            │            │ Format: exit                                      │
+            │            │ Example: exit                                     │
+            └────────────┴───────────────────────────────────────────────────┘
+            """;
 
         return new CommandResult(helpMessage);
     }

@@ -4,6 +4,8 @@ import modhero.common.exceptions.CorruptedDataFileException;
 import modhero.data.major.Major;
 import modhero.data.modules.Module;
 import modhero.data.modules.ModuleList;
+import modhero.storage.MajorLoader;
+import modhero.storage.ModuleLoader;
 import modhero.storage.Storage;
 import modhero.data.timetable.Timetable;
 
@@ -47,8 +49,10 @@ public class DataManager {
      */
     private void initializeData() {
         try {
-            preLoadModuleStorage.loadAllModulesData(allModulesData);
-            preLoadMajorStorage.loadAllMajorsData(allModulesData, allMajorsData);
+            ModuleLoader moduleLoader = new ModuleLoader(preLoadModuleStorage);
+            moduleLoader.loadAllModulesData(allModulesData);
+            MajorLoader majorLoader = new MajorLoader(preLoadMajorStorage);
+            majorLoader.loadAllMajorsData(allModulesData, allMajorsData);
             logger.log(Level.INFO, "Data loaded successfully");
         } catch (CorruptedDataFileException e) {
             logger.log(Level.SEVERE, "Clearing corrupted file", e);

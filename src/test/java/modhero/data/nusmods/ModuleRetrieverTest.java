@@ -1,7 +1,6 @@
-package modhero.data.api;
+package modhero.data.nusmods;
 
 import modhero.data.modules.Module;
-import modhero.data.nusmods.ModuleRetriever;
 
 import org.junit.jupiter.api.Test;
 

@@ -1,10 +1,8 @@
 // NusmodsApiClientTest.java
-package modhero.data.api;
+package modhero.data.nusmods;
 
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
-
-import modhero.data.nusmods.NusmodsAPIClient;
 
 class NusmodsAPIClientTest {
     private final NusmodsAPIClient client = new NusmodsAPIClient();

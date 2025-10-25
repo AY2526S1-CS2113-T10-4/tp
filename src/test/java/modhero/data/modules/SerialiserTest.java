@@ -1,7 +1,8 @@
-package modhero.storage;
+package modhero.data.modules;
 
 import modhero.common.exceptions.CorruptedDataFileException; // Must import the exception
-import org.junit.jupiter.api.BeforeEach;
+import modhero.common.util.Serialiser;
+import modhero.common.util.Deserialiser;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,23 +14,17 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class SerialiserTest {
 
-    private Serialiser serialiser;
-
-    @BeforeEach
-    void setUp() {
-        serialiser = new Serialiser();
-    }
 
     // --- serialiseMessage() ---
     @Test
     void testSerialiseMessage_basic() {
-        String result = serialiser.serialiseMessage("CS1010");
+        String result = Serialiser.serialiseMessage("CS1010");
         assertEquals("6#CS1010|", result);
     }
 
     @Test
     void testSerialiseMessage_emptyString() {
-        String result = serialiser.serialiseMessage("");
+        String result = Serialiser.serialiseMessage("");
         assertEquals("0#|", result);
     }
 
@@ -37,7 +32,7 @@ public class SerialiserTest {
     @Test
     void testSerialiseList_basic() {
         List<String> list = List.of("CS1010", "CS2040");
-        String result = serialiser.serialiseList(list);
+        String result = Serialiser.serialiseList(list);
 
         // This test was correct:
         // "6#CS1010|" + "7#CS2040|" = "6#CS1010|7#CS2040|" (Length 14)
@@ -47,7 +42,7 @@ public class SerialiserTest {
 
     @Test
     void testSerialiseList_emptyList() {
-        String result = serialiser.serialiseList(List.of());
+        String result = Serialiser.serialiseList(List.of());
         // serialiseList(empty) calls serialiseMessage("") which returns "0#|"
         assertEquals("0#|", result, "Empty list should serialise to what an empty string serialises to");
     }
@@ -56,7 +51,7 @@ public class SerialiserTest {
     @Test
     void testDeserialiseMessage_basic() {
         String serialised = "6#CS1010|7#CS2040|";
-        List<String> result = serialiser.deserialiseMessage(serialised);
+        List<String> result = Deserialiser.deserialiseMessage(serialised);
         assertEquals(List.of("CS1010", "CS2040"), result);
     }
 
@@ -64,7 +59,7 @@ public class SerialiserTest {
     void testDeserialiseMessage_handlesCorruptedDelimiter() {
         String corrupted = "6CS1010|"; // missing #
         // deserialiseMessage returns null on failure
-        List<String> result = serialiser.deserialiseMessage(corrupted);
+        List<String> result = Deserialiser.deserialiseMessage(corrupted);
         assertNull(result, "Should return null when missing delimiter");
     }
 
@@ -72,7 +67,7 @@ public class SerialiserTest {
     void testDeserialiseMessage_handlesInvalidLength() {
         String corrupted = "X#CS1010|"; // X is not a number
         // deserialiseMessage returns null on failure
-        List<String> result = serialiser.deserialiseMessage(corrupted);
+        List<String> result = Deserialiser.deserialiseMessage(corrupted);
         assertNull(result, "Should return null when length is invalid");
     }
 
@@ -80,7 +75,7 @@ public class SerialiserTest {
     void testDeserialiseMessage_handlesTruncatedString() {
         String incomplete = "6#CS10"; // incomplete message (missing characters)
         // deserialiseMessage returns null on failure
-        List<String> result = serialiser.deserialiseMessage(incomplete);
+        List<String> result = Deserialiser.deserialiseMessage(incomplete);
         assertNull(result, "Should return null when message truncated");
     }
 
@@ -92,7 +87,7 @@ public class SerialiserTest {
 
         // Use assertDoesNotThrow to handle the checked exception in a success case
         List<List<String>> result = assertDoesNotThrow(() -> {
-            return serialiser.deserialiseList(serialisedList);
+            return Deserialiser.deserialiseList(serialisedList);
         });
 
         assertEquals(2, result.size());
@@ -104,7 +99,7 @@ public class SerialiserTest {
     void testDeserialiseList_emptyInput() {
         // Use assertDoesNotThrow for this success case as well
         List<List<String>> result = assertDoesNotThrow(() -> {
-            return serialiser.deserialiseList(List.of());
+            return Deserialiser.deserialiseList(List.of());
         });
 
         assertTrue(result.isEmpty(), "Empty input should produce empty output");
@@ -121,7 +116,7 @@ public class SerialiserTest {
 
         // Use assertThrows to verify that the *correct* exception is thrown.
         assertThrows(CorruptedDataFileException.class, () -> {
-            serialiser.deserialiseList(corruptedList);
+            Deserialiser.deserialiseList(corruptedList);
         });
     }
 }

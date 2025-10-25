@@ -1,6 +1,6 @@
 package modhero.data.modules;
 
-import modhero.storage.Serialiser;
+import modhero.common.util.Serialiser;
 
 import java.util.List;
 import java.util.logging.Level;

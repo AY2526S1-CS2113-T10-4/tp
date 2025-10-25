@@ -44,4 +44,32 @@ public class PrereqGraph {
             System.out.println(e.getKey() + " → " + e.getValue());
         }
     }
+
+    /** Check if module to be added has met prerequisite requirements. */
+    public boolean hasMetPrerequisites(Module targetModule) {
+        List<String> completedCodes = new ArrayList<>();
+        for (Module m : modules) {
+            completedCodes.add(m.getCode());
+        }
+
+        List<List<String>> prereqSets = targetModule.getPrerequisites().getPrereq();
+        if (prereqSets == null || prereqSets.isEmpty()) {
+            return true; // no prereqs required
+        }
+
+        for (List<String> option : prereqSets) {
+            boolean satisfied = true;
+            for (String prereqCode : option) {
+                if (!completedCodes.contains(prereqCode)) {
+                    satisfied = false;
+                    break;
+                }
+            }
+            if (satisfied) {
+                return true; // one option fully satisfied
+            }
+        }
+        return false;
+    }
+
 }

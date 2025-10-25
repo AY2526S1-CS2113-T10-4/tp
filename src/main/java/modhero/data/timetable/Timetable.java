@@ -112,44 +112,29 @@ public class Timetable {
      * organized by year and term in table format.
      */
     public void printTimetable() {
+        int COL_WIDTH = 20;
+
         for (int year = 0; year < timetable.size(); year++) {
-            System.out.println("=".repeat(COL_WIDTH * timetable.get(year).size() + timetable.get(year).size() + 1));
+            System.out.println("+--------------------+--------------------+");
             String yearTitle = "YEAR " + (year + 1);
-            int tableWidth = COL_WIDTH * timetable.get(year).size() + timetable.get(year).size() + 1;
-            int padding = (tableWidth - yearTitle.length()) / 2;
-            System.out.println(" ".repeat(Math.max(0, padding)) + yearTitle);
-            System.out.println("=".repeat(COL_WIDTH * timetable.get(year).size() + timetable.get(year).size() + 1));
+            System.out.printf("%22s\n", yearTitle);
+            System.out.println("+--------------------+--------------------+");
+            System.out.printf("|%-20s|%-20s|\n", "Semester 1", "Semester 2");
+            System.out.println("+--------------------+--------------------+");
 
-            List<List<Module>> yearTerms = timetable.get(year);
+            List<List<Module>> semesters = timetable.get(year);
+            int maxRows = Math.max(semesters.get(0).size(), semesters.get(1).size());
 
-            // Header row
-            System.out.print("|");
-            for (int term = 0; term < yearTerms.size(); term++) {
-                String header = "Term " + (term + 1);
-                System.out.print(padCell(header, COL_WIDTH) + "|");
-            }
-            System.out.println();
-
-            // Find max rows needed
-            int maxModules = 0;
-            for (List<Module> termModules : yearTerms) {
-                maxModules = Math.max(maxModules, termModules.size());
+            for (int row = 0; row < maxRows; row++) {
+                String s1 = row < semesters.get(0).size() ? semesters.get(0).get(row).getCode() : "";
+                String s2 = row < semesters.get(1).size() ? semesters.get(1).get(row).getCode() : "";
+                System.out.printf("|%-20s|%-20s|\n", s1, s2);
             }
 
-            // Print modules row by row
-            for (int row = 0; row < maxModules; row++) {
-                System.out.print("|");
-                for (List<Module> termModules : yearTerms) {
-                    String content = (row < termModules.size()) ? termModules.get(row).getCode() : "";
-                    System.out.print(padCell(content, COL_WIDTH) + "|");
-                }
-                System.out.println();
-            }
-
-            System.out.println("=".repeat(COL_WIDTH * timetable.get(year).size() + timetable.get(year).size() + 1));
-            System.out.println();
+            System.out.println("+--------------------+--------------------+\n");
         }
     }
+
 
     /**
      * Pads the given text with spaces or truncates it so that
