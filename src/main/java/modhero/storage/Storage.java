@@ -31,9 +31,10 @@ public class Storage {
      *
      * @param filePath the path of the file to load from or save to
      */
-    public Storage(String filePath) {
-        assert filePath != null && !filePath.isEmpty() : "File path must not be empty";
-
+    public Storage(String filePath) throws IllegalArgumentException{
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException("File path must not be null or empty");
+        }
         this.filePath = filePath;
     }
 
@@ -41,9 +42,11 @@ public class Storage {
      * Ensures that the directory for the file path exists.
      * Creates directories if not present.
      */
-    private void ensureFileDirectoryExist() {
-        new File(filePath).getParentFile().mkdirs();
-
+    private void ensureFileDirectoryExist() throws IOException {
+        File parent = new File(filePath).getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory: " + parent.getAbsolutePath());
+        }
         logger.log(Level.FINEST, "Ensured directory existence");
     }
 
@@ -74,7 +77,7 @@ public class Storage {
             ensureFileExist();
             return readFromFile();
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Failed to load file, " + e);
+            System.out.println("Failed to load file");
             return new ArrayList<>();
         }
     }
@@ -140,27 +143,31 @@ public class Storage {
 
         Serialiser serialiser = new Serialiser();
         List<String> rawModulesList = load();
-        List<List<String>> allModulesList = serialiser.deserialiseList(rawModulesList);
-        for (List<String> moduleArgs : allModulesList) {
-            if (moduleArgs.size() != 5) {
-                logger.log(Level.WARNING, "Incorrect number of arguments for module: " + moduleArgs.size());
-                break;
-            }
-            try {
-                List<String> deserialsedPrerequisites = serialiser.deserialiseMessage(moduleArgs.get(4));
-                List<List<String>> deserialsedPrerequisitesList = serialiser.deserialiseList(deserialsedPrerequisites);
-                if (!deserialsedPrerequisitesList.isEmpty()) {
-                    logger.log(Level.WARNING, "Unable to parse prerequisites: " + moduleArgs.get(4));
+        try {
+            List<List<String>> allModulesList = serialiser.deserialiseList(rawModulesList);
+            for (List<String> moduleArgs : allModulesList) {
+                if (moduleArgs.size() != 5) {
+                    logger.log(Level.WARNING, "Incorrect number of arguments for module: " + moduleArgs.size());
                     break;
                 }
-                Module module = new Module(moduleArgs.get(0), moduleArgs.get(1), Integer.parseInt(moduleArgs.get(2)),
-                        moduleArgs.get(3), new Prerequisites(deserialsedPrerequisitesList));
-                allModulesData.put(module.getCode(), module);
-                allModulesData.put(module.getName(), module);
-                logger.log(Level.FINEST, "Added module into database: " + module.getCode());
-            } catch (NumberFormatException e) {
-                logger.log(Level.WARNING, "Unable to parse module credit: " + moduleArgs.get(2));
+                try {
+                    List<String> deserialsedPrerequisites = serialiser.deserialiseMessage(moduleArgs.get(4));
+                    List<List<String>> deserialsedPrerequisitesList = serialiser.deserialiseList(deserialsedPrerequisites);
+                    if (!deserialsedPrerequisitesList.isEmpty()) {
+                        logger.log(Level.WARNING, "Unable to parse prerequisites: " + moduleArgs.get(4));
+                        break;
+                    }
+                    Module module = new Module(moduleArgs.get(0), moduleArgs.get(1), Integer.parseInt(moduleArgs.get(2)),
+                            moduleArgs.get(3), new Prerequisites(deserialsedPrerequisitesList));
+                    allModulesData.put(module.getCode(), module);
+                    allModulesData.put(module.getName(), module);
+                    logger.log(Level.FINEST, "Added module into database: " + module.getCode());
+                } catch (NumberFormatException e) {
+                    logger.log(Level.WARNING, "Unable to parse module credit: " + moduleArgs.get(2));
+                }
             }
+        } catch (CorruptedDataFileException e){
+            System.out.println("System data file got corrupted :(");
         }
     }
 
@@ -198,14 +205,14 @@ public class Storage {
      * @param moduleCodes modules code in a list of string
      * @return ModuleList
      */
-    private ModuleList createModuleList(Map<String, Module> allModulesData, List<String> moduleCodes) {
+    private ModuleList createModuleList(Map<String, Module> allModulesData, List<String> moduleCodes) throws CorruptedDataFileException {
         ModuleList moduleList = new ModuleList();
         for (String code : moduleCodes) {
             Module module = allModulesData.get(code);
             if (module != null) {
                 moduleList.add(module);
             } else {
-                logger.log(Level.WARNING, "Missing module for major: " + code);
+                throw new CorruptedDataFileException();
             }
         }
         return moduleList;

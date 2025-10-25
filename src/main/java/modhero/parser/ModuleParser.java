@@ -33,31 +33,39 @@ public class ModuleParser {
         }
 
         // Use static methods from JsonUtil
-        String code = JsonUtil.getArg(json, CODE);
-        String name = JsonUtil.getArg(json, NAME);
-        String mc = JsonUtil.getArg(json, MC);
-        String prereq = JsonUtil.getArg(json, PREREQ);
+        try {
+            String code = JsonUtil.getArg(json, CODE);
+            String name = JsonUtil.getArg(json, NAME);
+            String mc = JsonUtil.getArg(json, MC);
+            String prereq = JsonUtil.getArg(json, PREREQ);
 
-        if (!isValidRawData(code, name, mc)) {
-            logger.log(Level.WARNING, () ->
-                    String.format("Module retrieved contains null %s, %s, %s, %s", code, name, mc, prereq)
-            );
+            if (!isValidRawData(code, name, mc)) {
+                logger.log(Level.WARNING, () ->
+                        String.format("Module retrieved contains null %s, %s, %s, %s", code, name, mc, prereq)
+                );
+                return null;
+            }
+
+            int parsedMc = parseModuleCredit(mc);
+            if (parsedMc == -1) {
+                logger.log(Level.WARNING, "Unable to parse module credit: " + mc);
+                return null;
+            }
+
+            Prerequisites parsedPrereqObj = new Prerequisites();
+            if (prereq != null) {
+                try {
+                    List<List<String>> parsedPrereq = parsePrereq(prereq);
+                    parsedPrereqObj = new Prerequisites(parsedPrereq);
+                } catch (Exception e) {
+                    logger.log(Level.WARNING, "Failed to parse prerequisites for " + code, e);
+                }
+            }
+            return new Module(code, name, parsedMc, "core", parsedPrereqObj);
+        } catch (Exception e) {
+            System.out.println( " unexpected error parsing json");
             return null;
         }
-
-        int parsedMc = parseModuleCredit(mc);
-        if (parsedMc == -1) {
-            logger.log(Level.WARNING, "Unable to parse module credit: " + mc);
-            return null;
-        }
-
-        Prerequisites parsedPrereqObj = new Prerequisites();
-        if (prereq != null) {
-            List<List<String>> parsedPrereq = parsePrereq(prereq);
-            parsedPrereqObj = new Prerequisites(parsedPrereq);
-        }
-
-        return new Module(code, name, parsedMc, "core", parsedPrereqObj);
     }
 
     /**

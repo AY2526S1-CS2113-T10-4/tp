@@ -40,8 +40,6 @@ public class DataManager {
         this.allMajorsData = new HashMap<>();
         this.preLoadModuleStorage = new Storage(modulesPath);
         this.preLoadMajorStorage = new Storage(majorPath);
-
-        initializeData();
     }
 
     /**
