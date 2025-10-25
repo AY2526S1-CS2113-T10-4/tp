@@ -32,9 +32,10 @@ public class Storage {
      *
      * @param filePath the path of the file to load from or save to
      */
-    public Storage(String filePath) {
-        assert filePath != null && !filePath.isEmpty() : "File path must not be empty";
-
+    public Storage(String filePath) throws IllegalArgumentException {
+        if (filePath == null || filePath.isEmpty()) {
+            throw new IllegalArgumentException("File path must not be null or empty");
+        }
         this.filePath = filePath;
     }
 
@@ -51,7 +52,7 @@ public class Storage {
             ensureFileExist();
             return readFromFile();
         } catch (IOException e) {
-            logger.log(Level.WARNING, "Failed to load file, " + e);
+            System.out.println("Failed to load file");
             return new ArrayList<>();
         }
     }
@@ -77,9 +78,11 @@ public class Storage {
      * Ensures that the directory for the file path exists.
      * Creates directories if not present.
      */
-    private void ensureFileDirectoryExist() {
-        new File(filePath).getParentFile().mkdirs();
-
+    private void ensureFileDirectoryExist() throws IOException {
+        File parent = new File(filePath).getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            throw new IOException("Failed to create directory: " + parent.getAbsolutePath());
+        }
         logger.log(Level.FINEST, "Ensured directory existence");
     }
 

@@ -7,8 +7,8 @@
 ## Design & implementation
 
 {Describe the design and implementation of the product. Use UML diagrams and short code snippets where applicable.}
-
-
+## High-Level Architecture
+![High Level Architecture Diagram](High-Level Architecture.png)
 ## Product scope
 ### Target user profile
 

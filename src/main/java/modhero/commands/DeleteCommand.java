@@ -22,8 +22,10 @@ public class DeleteCommand extends Command {
 
     private final List<String> electives;
 
-    public DeleteCommand(List<String> electives) {
-        assert electives != null : "Elective list argument must not be null";
+    public DeleteCommand(List<String> electives) throws IllegalArgumentException{
+        if ( electives == null){
+            throw new IllegalArgumentException("Electives list should not be empty");
+        }
         this.electives = electives;
         logger.log(Level.FINEST, "Create delete electives: " + electives.toString());
     }
@@ -38,14 +40,20 @@ public class DeleteCommand extends Command {
         StringBuilder feedback = new StringBuilder("Electives removed: ");
         for (String elective : electives) {
             boolean isFound = false;
-            for (int i = 0; i < electives.size(); i++) {
-                Module module = electiveList.getList().get(i);
-                if (module.getCode().equals(elective)) {
-                    electiveList.remove(i);
-                    feedback.append(elective).append(" ");
-                    isFound = true;
-                    break;
+            try {
+                for (int i = 0; i < electives.size(); i++) {
+                    Module module = electiveList.getList().get(i);
+                    if (module.getCode().equals(elective)) {
+                        electiveList.remove(i);
+                        feedback.append(elective).append(" ");
+                        isFound = true;
+                        break;
+                    }
                 }
+            }catch (IndexOutOfBoundsException e){
+                logger.log(Level.WARNING, "Index out of bounds while deleting elective: " + elective, e);
+                feedback.append("\nError removing elective ").append(elective)
+                        .append(" (list out of sync)\n");
             }
 
             if (!isFound) {
