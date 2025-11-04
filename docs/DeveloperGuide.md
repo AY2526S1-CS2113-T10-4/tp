@@ -29,7 +29,7 @@ It serves as a roadmap for future developers to understand how the system is str
 
 ### High-Level Architecture
 <figure align="center">
-  <img src="diagrams/HighLevelArchitecture.png" alt="High Level Architecture Diagram" />
+  <img src="diagrams/HighLevelArchitecture.png" alt="High Level Architecture Diagram" width="417" />
   <figcaption><em>High-Level Architecture Diagram of ModHero</em></figcaption>
 </figure>
 
