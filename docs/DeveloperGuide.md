@@ -269,7 +269,22 @@ The following two diagrams illustrate how modules are added to the timetable whe
 
 ## Documentation, Logging and Testing
 
-## Appendix: Requirements
+### Logging
+* We are using `java.util.logging` package for logging
+* The Logger for a class can be obtained using `Logger.getLogger(Class)`
+* To manage the logging levels and destinations, changes can be made to the
+`LoggerConfig` Class in the `common.config` package
+* Log messages are output to the console
+  By default, logging messages are turned off. To enable logging, update the configuration in the `run()` method of the `ModHero` class:
+
+```java
+// Before: logging is off
+LoggerConfig.configureLoggers(Level.OFF);
+
+// After: logging is on
+LoggerConfig.configureLoggers(Level.ALL); // or Level.INFO for normal info messages
+```
+## Appendix: Requirement
 
 ### Product Scope
 
