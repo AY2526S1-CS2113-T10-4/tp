@@ -2,8 +2,15 @@ package modhero.common;
 
 import java.util.List;
 
+/**
+ * Holds all global constants used in ModHero.
+ */
 public final class Constants {
+    private Constants() {} // Prevent instantiation
+
+    /** UI-related text constants. */
     public static final class UiConstants {
+        /** Welcome message shown at program start. */
         public static final String WELCOME = """
                 ┌───────────────────────────────────────────────────────────────────────────────┐
                 │                               Welcome to ModHero                              │
@@ -35,9 +42,15 @@ public final class Constants {
                 """;
     }
 
+    /** Message templates used throughout the application. */
     public static final class MessageConstants {
+        /** Template for invalid command messages. */
         public static final String INVALID_COMMAND_FORMAT = "Invalid command format! \n%1$s";
+
+        /** Index out-of-bounds warning. */
         public static final String ARRAY_INDEX_OUT_BOUND = "(Your index is out of bound)";
+
+        /** Help message displaying all available commands. */
         public static final String HELP = """
             ┌────────────────────────────────────────────────────────────────┐
             │                          ModHero Help                          │
@@ -75,6 +88,7 @@ public final class Constants {
             """;
     }
 
+    /** Academic configuration constants. */
     public static final class AcademicConstants {
         public static final int NUM_YEARS = 4;
         public static final int NUM_TERMS = 2;
@@ -82,17 +96,20 @@ public final class Constants {
         public static final int MAX_MODULES_PER_SEM = 5;
     }
 
+    /** File paths used for saving and loading data. */
     public static final class FilePathConstants {
         public static final String MODULES_FILE_PATH = "data/modules.txt";
         public static final String MAJOR_FILE_PATH = "data/major.txt";
         public static final String TIMETABLE_FILE_PATH = "data/save.txt";
     }
 
+    /** Delimiters used in serialization. */
     public static final class FormatConstants {
         public static final String START_DELIMITER = "#";
         public static final String END_DELIMITER = "|";
     }
 
+    /** Lists of modules exempted from prerequisites. */
     public static final class ExemptedModulesConstants {
         public static final List<String> CS_EXEMPTED_MODULES = List.of("MA1301", "PC1201") ;
         public static final List<String> CEG_EXEMPTED_MODULES = List.of("MA1301", "PC1201") ;

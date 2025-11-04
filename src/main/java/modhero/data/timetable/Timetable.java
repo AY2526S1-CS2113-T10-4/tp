@@ -19,8 +19,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Represents a multi-year academic timetable, storing modules organized
- * by year and term.
+ * Represents an academic timetable organized by year and semester.
  */
 public class Timetable {
     public static final Logger logger = Logger.getLogger(Timetable.class.getName());
@@ -28,9 +27,7 @@ public class Timetable {
     private List<List<List<Module>>> timetable;
 
     /**
-     * Creates a timetable structure for the specified number of years and terms.
-     * Each year contains a list of terms, which in turn contain modules.
-     *
+     * Creates an empty timetable initialized for all years and semesters.
      */
     public Timetable() {
         timetable = new ArrayList<>();
@@ -48,11 +45,12 @@ public class Timetable {
     }
 
     /**
-     * Adds a module to the timetable, performing all business logic checks.
+     * Adds a module after validating prerequisites, preclusions, and exemptions.
      *
-     * @param module   The Module object to add.
-     * @param year     The academic year (1-based).
-     * @param semester The semester (1-based).
+     * @param module the module to add
+     * @param year academic year (1-based)
+     * @param semester semester (1-based)
+     * @throws ModHeroException if the module cannot be added
      */
     public void addModule(int year, int semester, Module module, List<String> exemptedModules) throws ModHeroException {
         // Bounds check
@@ -91,12 +89,11 @@ public class Timetable {
     }
 
     /**
-     * Internal method to add a module to a specific year and term.
-     * No checks are performed here.
+     * Adds a module directly to the timetable without validation.
      *
-     * @param year   the year index (0-based)
-     * @param term   the term index (0-based)
-     * @param module the module to add
+     * @param year year index (0-based)
+     * @param term term index (0-based)
+     * @param module module to add
      */
     public void addModuleDirect(int year, int term, Module module) {
         timetable.get(year).get(term).add(module);
@@ -104,11 +101,10 @@ public class Timetable {
     }
 
     /**
-     * Deletes a module from the timetable, checking prerequisites.
+     * Deletes a module after validating dependencies.
      *
-     * @param moduleCode the code of the module to delete
-     * @throws ModuleNotFoundException     if the module is not found in the timetable
-     * @throws ModuleAdditionBlockedException if other modules depend on this module as a prerequisite
+     * @param moduleCode module code to delete
+     * @throws ModHeroException if the module cannot be deleted
      */
     public void deleteModule(String moduleCode, List<String> exemptedModules) throws ModHeroException {
         // Find the module location

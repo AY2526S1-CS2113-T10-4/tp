@@ -47,6 +47,9 @@ public class Module {
         logger.log(Level.FINEST, "Module created: " + name + " (" + code + ")");
     }
 
+    /**
+     * Constructs a Module without preclusion string (defaults to empty).
+     */
     public Module(String code, String name, int mc, String type, Prerequisites prerequisites) {
         assert code != null && !code.isEmpty() : "Module code must not be empty";
         assert name != null && !name.isEmpty() : "Module name must not be empty";

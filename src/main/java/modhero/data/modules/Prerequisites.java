@@ -7,39 +7,39 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Represents module prerequisites as a list of OR-groups.
+ * Each inner list represents a set of modules where any one satisfies the requirement.
+ */
 public class Prerequisites {
     public static final Logger logger = Logger.getLogger(Prerequisites.class.getName());
 
+    /** OR-grouped prerequisite modules. */
     private List<List<String>> prereq;
 
+    /** Creates an empty prerequisites object. */
     public Prerequisites() {
         this.prereq = new ArrayList<>();
     }
 
+    /**
+     * Creates a prerequisites object with predefined OR-groups.
+     *
+     * @param prereq list of OR-groups (each inner list contains module codes)
+     */
     public Prerequisites(List<List<String>> prereq) {
         this.prereq = prereq;
     }
 
+    /** Returns the list of OR-groups representing prerequisites. */
     public List<List<String>> getPrereq() {
         return prereq;
     }
+
     /**
-     * Serializes prerequisites into a doubly-serialized string format.
-     *
-     * Structure:
-     * 1. Each module code in a combination is serialized
-     * 2. Each combination is serialized together
-     *
-     * This produces a doubly-serialized blob that will be wrapped one more time
-     * by the caller (DataGenerator), resulting in triple serialization total.
-     *
-     * Example for [[CS1010, CS1101S], [CS1010E]]:
-     * - Serialize CS1010 → wrap1
-     * - Serialize CS1101S → wrap2
-     * - Serialize (wrap1 + wrap2) → combination1
-     * - Serialize CS1010E → wrap3
-     * - Serialize (wrap3) → combination2
-     * - Return combination1 + combination2 (doubly-serialized blob)
+     * Serializes prerequisites into a doubly-serialized string.
+     * Each module code in a combination is serialized, then the combination is serialized.
+     * Intended to be wrapped again by the caller for triple serialization.
      *
      * @return doubly-serialized prerequisites string
      */
@@ -48,21 +48,17 @@ public class Prerequisites {
 
         if (prereq == null || prereq.isEmpty()) {
             logger.log(Level.FINEST, "No prerequisites to serialize");
-            return ""; // Empty string for no prerequisites
+            return "";
         }
 
         SerialisationUtil serialisationUtil = new SerialisationUtil();
         StringBuilder outerBuilder = new StringBuilder();
 
-        // For each combination (OR group of prerequisites)
         for (List<String> combination : prereq) {
-            // Serialize each module code in the combination
             StringBuilder innerBuilder = new StringBuilder();
             for (String moduleCode : combination) {
                 innerBuilder.append(serialisationUtil.serialiseMessage(moduleCode));
             }
-
-            // Serialize the entire combination
             outerBuilder.append(serialisationUtil.serialiseMessage(innerBuilder.toString()));
         }
 
@@ -71,6 +67,7 @@ public class Prerequisites {
         return serialisedPrereqs;
     }
 
+    /** Returns a human-readable string representation of prerequisites. */
     @Override
     public String toString() {
         if (prereq == null || prereq.isEmpty()) {

@@ -116,7 +116,7 @@ Reset to default Timetable for Major in cs. Type 'schedule' to view your 4-year 
 > Running major command will clear your timetable and replace it with core modules for that major.
 
 ### Adding a Module: `add`
-Adds a specific module (core, elective, or any valid NUS module) to a chosen year and semester in your degree plan.
+Adds **one** specific module (core, elective, or any valid NUS module) to a chosen year and semester in your degree plan.
 
 > [!Note]
 > This command is typically used for manually adjusting your study roadmap after setting your major.
@@ -159,11 +159,12 @@ Details:
   - Whether you already have it in your timetable
   - Whether prerequisites are satisfied 
   - Whether the semester exceeds your degree’s valid range
+  - Whether the module has preclusion with the existing modules in the timetable.
 
 If any of these checks fail, ModHero will display an error message explaining the issue.
 
 ### Deleting an Elective: `delete`
-Removes one module from your plan.
+Removes **one** module at a time from your plan.
 
 #### Format:
 Specify module you want to delete, letters can be both upper and lower case
@@ -257,14 +258,14 @@ ModHero stores your degree plan in:
 
 ## Command Summary
 
-| Action       | Format / Examples                                                                                                                              |
-|--------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Major**    | `major MAJOR_NAME `<br>_e.g._ `major Computer Science` |
-| **Add**      | `add MODULE_CODE to YxSy`<br>_e.g._ `add CS2109S to Y1S1`                                                                                      |
-| **Delete**   | `delete MODULE_CODE ...`<br>_e.g._ `delete CS2109S`                                                                                            |
-| **Schedule** | `schedule`                                                                                                                                     |
-| **Clear**    | `clear`                                                                                                                                        |a
-| **Help**     | `help`                                                                                                                                         |
+| Action       | Format / Examples                                         |
+| ------------ | --------------------------------------------------------- |
+| **Major**    | `major MAJOR_NAME`<br>*e.g.* `major Computer Science`     |
+| **Add**      | `add MODULE_CODE to YxSy`<br>*e.g.* `add CS2109S to Y1S1` |
+| **Delete**   | `delete MODULE_CODE ...`<br>*e.g.* `delete CS2109S`       |
+| **Schedule** | `schedule`                                                |
+| **Clear**    | `clear`                                                   |
+| **Help**     | `help`                                                    |
 
 2025 ModHero Team - CS2113-T10-4  
 Based on SE-EDU framework.
