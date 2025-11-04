@@ -284,6 +284,10 @@ LoggerConfig.configureLoggers(Level.OFF);
 // After: logging is on
 LoggerConfig.configureLoggers(Level.ALL); // or Level.INFO for normal info messages
 ```
+
+### Documentation
+Most methods and classes have javadocs above them which can be referred to. For higher level details about the logic
+and implementation of each function, refer to the sections of this developer guide above
 ## Appendix: Requirement
 
 ### Product Scope
