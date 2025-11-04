@@ -3,12 +3,15 @@ package modhero.common.predata;
 import java.util.*;
 
 /**
- * Stores predefined core modules and schedule mappings
- * for supported majors (Computer Science & Computer Engineering).
+ * Provides predefined core module schedules for supported majors.
  */
 public class MajorSchedule {
     /**
-     * Returns a schedule mapping (moduleCode → [year, sem]) for each major.
+     * Returns a mapping of module codes to their recommended year and semester.
+     * Supports Computer Science and Computer Engineering majors.
+     *
+     * @param major the name of the major
+     * @return a map of module codes to [year, semester]
      */
     public Map<String, int[]> getSchedule(String major) {
         major = major.trim().toLowerCase();

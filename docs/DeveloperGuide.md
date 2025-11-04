@@ -170,7 +170,7 @@ The `add` feature allows users to add a module to their timetable in a specific 
 This diagram illustrates the typical flow for adding a module that is *not* yet in the local cache (`allModulesData`) but *is* found in the NUSMods API, and for which the user *meets* the prerequisites.
 
 <figure align="center">
-    <img src="diagrams/addCommand.svg" alt="Add Command Sequence Diagram" />
+    <img src="diagrams/addCommand.png" alt="Add Command Sequence Diagram" />
     <figcaption><em>Add Command Sequence Diagram</em></figcaption>
 </figure>
 
@@ -329,8 +329,9 @@ MSS
 1. User enters a command to add a module (e.g. add CS1010 to Y1S1).
 2. ModHero checks if the module exists in the database.
 3. ModHero verifies that all prerequisites for the module are satisfied.
-4. ModHero adds the module to the specified year and semester in the timetable.
-5. ModHero confirms the successful addition with a message to the user.
+4. ModHero verifies that this module doesn't have preclusion with the existing modules in the timetable.
+5. ModHero adds the module to the specified year and semester in the timetable.
+6. ModHero confirms the successful addition with a message to the user.
 
 Extensions
 2a. Module does not exist in the database.
@@ -397,73 +398,54 @@ Extensions
 ### Non-Functional Requirements
 
 Non-Functional Requirements
-1. Performance
+- Performance
+    - ModHero should respond to user commands within 1 second under normal usage.
 
-- ModHero should respond to user commands within 1 second under normal usage.
+    - The system should handle up to 500 modules and 10,000 prerequisite links without noticeable delay.
 
-- The system should handle up to 500 modules and 10,000 prerequisite links without noticeable delay.
+    - File read/write operations (saving and loading) should complete within 2 seconds.
+- Reliability
+    - Data should be automatically saved after every major operation (e.g. add, delete, major).
 
-- File read/write operations (saving and loading) should complete within 2 seconds.
+    - The system must detect and recover gracefully from corrupted or missing data files by showing a clear error message and loading a clean state. 
 
-2. Reliability
+    - All deserialization processes must validate file structure before parsing to prevent data loss.
+- Compatibility
+    - ModHero must run on any operating system with Java 17 or higher installed.
 
-- Data should be automatically saved after every major operation (e.g. add, delete, major).
+    - It should work consistently across Windows, macOS, and Linux.
+- Usability
+    - Commands should follow a consistent command ARGUMENTS syntax.
 
-- The system must detect and recover gracefully from corrupted or missing data files by showing a clear error message and loading a clean state. 
+    - Error messages must clearly explain what went wrong and how to fix it.
 
-- All deserialization processes must validate file structure before parsing to prevent data loss.
+    - The CLI output should be formatted using monospaced alignment to improve timetable readability.
+- Maintainability
+    - The codebase must remain modular — each component (UI, Logic, Model, Storage) should be independently testable.
 
-3. Compatibility
+    - Logging should use Java’s built-in java.util.logging framework with appropriate levels (INFO, WARNING, SEVERE).
 
-- ModHero must run on any operating system with Java 17 or higher installed.
+    - All public classes and methods must include concise Javadoc comments describing their purpose and behavior.
+- Extensibility
+    - New commands or data types should be implementable without modifying core logic, following the Command pattern.
 
-- It should work consistently across Windows, macOS, and Linux.
+    - The modular architecture should allow easy integration of new features such as undo, export, or recommend.
+- Security
+    - File operations should be restricted to ModHero’s working directory to prevent unauthorized access.
 
-4. Usability
+    - Deserialization must reject malformed or unexpected input to ensure application safety.
+- Portability
+    - The application must be distributable as a single standalone .jar file with no external dependencies.
 
-- Commands should follow a consistent command ARGUMENTS syntax.
+    - All file paths should be relative, ensuring consistent behavior across machines.
+- Scalability
+    - The data model should support adding new majors, module types, or academic structures without restructuring the architecture.
 
-- Error messages must clearly explain what went wrong and how to fix it.
+    - The storage format should remain human-readable and backward-compatible with future versions.
+- Testing Coverage
+    - Each component should achieve at least 80% unit test coverage.
 
-- The CLI output should be formatted using monospaced alignment to improve timetable readability.
-
-5. Maintainability
-
-- The codebase must remain modular — each component (UI, Logic, Model, Storage) should be independently testable.
-
-- Logging should use Java’s built-in java.util.logging framework with appropriate levels (INFO, WARNING, SEVERE).
-
-- All public classes and methods must include concise Javadoc comments describing their purpose and behavior.
-
-6. Extensibility
-
-- New commands or data types should be implementable without modifying core logic, following the Command pattern.
-
-- The modular architecture should allow easy integration of new features such as undo, export, or recommend.
-
-7. Security
-
-- File operations should be restricted to ModHero’s working directory to prevent unauthorized access.
-
-- Deserialization must reject malformed or unexpected input to ensure application safety.
-
-8. Portability
-
-- The application must be distributable as a single standalone .jar file with no external dependencies.
-
-- All file paths should be relative, ensuring consistent behavior across machines.
-
-9. Scalability
-
-- The data model should support adding new majors, module types, or academic structures without restructuring the architecture.
-
-- The storage format should remain human-readable and backward-compatible with future versions.
-
-10. Testing Coverage
-
-- Each component should achieve at least 80% unit test coverage.
-
-- Core features (Add, Delete, Major, Schedule) must include both valid and invalid JUnit test cases.
+    - Core features (Add, Delete, Major, Schedule) must include both valid and invalid JUnit test cases.
 
 ### Glossary
 

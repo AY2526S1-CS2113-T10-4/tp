@@ -17,14 +17,19 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Generates the text file content for modules.txt and majors.txt.
- *
- * REQUIRES: An active internet connection.
+ * Generates serialized text files for module and major data used by ModHero.
+ * Requires an active internet connection to fetch data from NUSMods.
  */
 public class DataGenerator {
-
+    /**
+     * Academic year to fetch module data from NUSMods API.
+     */
     private static final String ACAD_YEAR = "2025-2026";
 
+    /**
+     * Entry point for generating modules.txt and majors.txt.
+     * Fetches, serializes, and saves live module and major data.
+     */
     public static void main(String[] args) {
         // Generate Module Data
         System.out.println("Fetching live module data from NUSMods API...");
@@ -46,6 +51,12 @@ public class DataGenerator {
         System.out.println("Successfully saved to " + MAJOR_FILE_PATH);
     }
 
+    /**
+     * Fetches module data from NUSMods, parses it, and serializes the results.
+     * Uses dummy data if fetching or parsing fails.
+     *
+     * @return serialized text content for modules.txt, or null if an error occurs
+     */
     private static String generateModulesTxt() {
         NusmodsAPIClient client = new NusmodsAPIClient();
         ModuleParser parser = new ModuleParser();
@@ -122,27 +133,23 @@ public class DataGenerator {
     }
 
     /**
-     * Serializes the complex List<List<String>> prerequisite structure.
+     * Serializes nested prerequisite structures into a compact, text-safe format.
      *
-     * @param prereqCombinations the prerequisite combinations structure
-     * @return doubly-serialized prerequisites blob (to be wrapped once more)
+     * @param prereqCombinations list of OR-groups of prerequisite module codes
+     * @return doubly serialized string representing prerequisites
      */
     private static String serializePrereqList(List<List<String>> prereqCombinations) {
         if (prereqCombinations == null || prereqCombinations.isEmpty()) {
-            return ""; // Empty string for no prerequisites
+            return "";
         }
 
         StringBuilder prereqBlobBuilder = new StringBuilder();
 
-        // For each combination (OR group)
         for (List<String> combo : prereqCombinations) {
-            // WRAP 1: Serialize each module code
             StringBuilder comboBuilder = new StringBuilder();
             for (String moduleCode : combo) {
                 comboBuilder.append(SerialisationUtil.serialiseMessage(moduleCode));
             }
-
-            // WRAP 2: Serialize the entire combination
             prereqBlobBuilder.append(SerialisationUtil.serialiseMessage(comboBuilder.toString()));
         }
 
@@ -150,6 +157,11 @@ public class DataGenerator {
         return prereqBlobBuilder.toString();
     }
 
+    /**
+     * Builds major data entries for majors.txt based on predefined module lists.
+     *
+     * @return serialized text content for majors.txt
+     */
     private static String generateMajorsTxt() {
         StringBuilder fileContent = new StringBuilder();
         MajorSchedule majorSchedule = new MajorSchedule();
@@ -178,6 +190,15 @@ public class DataGenerator {
         return fileContent.toString();
     }
 
+    /**
+     * Builds one serialized major entry with its modules, year, and semester info.
+     *
+     * @param name major name
+     * @param abbr major abbreviation
+     * @param moduleCodes module codes under the major
+     * @param schedule map of module codes to year-semester pairs
+     * @return serialized major line
+     */
     private static String buildMajorLine(String name, String abbr,
                                          List<String> moduleCodes, Map<String, int[]> schedule) {
         StringBuilder modulesBlobBuilder = new StringBuilder();

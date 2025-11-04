@@ -58,7 +58,6 @@ public class Parser {
         }
     }
 
-
     /**
      * Parses arguments in the context of the major command.
      *
@@ -73,6 +72,12 @@ public class Parser {
         return new MajorCommand(args);
     }
 
+    /**
+     * Prepares the DeleteCommand from arguments.
+     *
+     * @param args command arguments
+     * @return DeleteCommand or IncorrectCommand if invalid
+     */
     private Command prepareDeleteCommand(String args) {
         if (args.isEmpty()) {
             return new IncorrectCommand(String.format(MessageConstants.INVALID_COMMAND_FORMAT, DeleteCommand.MESSAGE_USAGE));
@@ -89,6 +94,12 @@ public class Parser {
         return new DeleteCommand(moduleCode);
     }
 
+    /**
+     * Prepares the AddCommand from arguments.
+     *
+     * @param args command arguments
+     * @return AddCommand or IncorrectCommand if invalid
+     */
     private Command prepareAddCommand(String args) {
         if (args.isEmpty()) {
             return new IncorrectCommand(String.format(MessageConstants.INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
